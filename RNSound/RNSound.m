@@ -71,6 +71,12 @@
     NSNumber* key = [self keyForPlayer:player];
     if (key == nil) return;
 
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    NSError *error = nil;
+    if (![audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&error]) {
+      NSLog(@"resume music player failed, error=%@", error);
+    }
+      
     [self setOnPlay:NO forPlayerKey:key];
     RCTResponseSenderBlock callback = [self callbackForKey:key];
     if (callback) {
