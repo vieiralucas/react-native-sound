@@ -10,6 +10,7 @@ import android.media.AudioManager;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -39,6 +40,25 @@ public class RNSoundModule extends ReactContextBaseJavaModule implements AudioMa
     super(context);
     this.context = context;
     this.category = null;
+
+    this.context.addLifecycleEventListener(new LifecycleEventListener() {
+      @Override
+      public void onHostResume() {
+      }
+
+      @Override
+      public void onHostPause() {
+      }
+
+      @Override
+      public void onHostDestroy() {
+        for (MediaPlayer player : playerPool.values()) {
+          if (player.isPlaying()) {
+            player.stop();
+          }
+        }
+      }
+    });
   }
 
   private void setOnPlay(boolean isPlaying, final Double playerKey) {
